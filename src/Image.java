@@ -18,6 +18,14 @@ public class Image {
         }
     }
 
+    public int height(){
+        return  pixels.length;
+    }
+
+    public int width(){
+        return pixels[0].length;
+    }
+
     public static Image open(String filename){
         BufferedImage buffImg;
 
@@ -40,14 +48,15 @@ public class Image {
     }
 
     public Image toNegative(){
+        int[][][] output = new int[pixels.length][pixels[0].length][pixels[0][0].length];
         for (int x = 0; x < pixels.length; x++){
             for (int y = 0; y < pixels[0].length; y++){
                 for (int z = 0; z < pixels[0][0].length; z++){
-                    pixels[x][y][z] = type - pixels[x][y][z];
+                    output[x][y][z] = type - pixels[x][y][z];
                 }
             }
         }
-        return this;
+        return new Image(output, mode);
     }
 
     public Image toGrayScale(){
@@ -58,6 +67,25 @@ public class Image {
             }
         }
         return new Image(output, "P2");
+    }
+
+    public Image toBW(){
+        int[][][] output = new int[pixels.length][pixels[0].length][1];
+        for (int x = 0; x < pixels.length; x++){
+            for (int y = 0; y < pixels[0].length; y++){
+                int sum = 0;
+                for (int z = 0; z < pixels[0][0].length; z++){
+                    sum += pixels[x][y][z];
+                }
+                if ((sum / pixels[0][0].length) > 127){
+                    output[x][y][0] = 0;
+                }
+                else{
+                    output[x][y][0] = 1;
+                }
+            }
+        }
+        return new Image(output, "P1");
     }
 
     public void saveAs(String filename) throws IOException{
