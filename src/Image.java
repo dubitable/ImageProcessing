@@ -4,22 +4,13 @@ import javax.imageio.ImageIO;
 
 public class Image {
     private int[][][] pixels;
-    private String mode;
-    private int type;
 
-    public Image(int[][][] imagePixels, String m){
+    public Image(int[][][] imagePixels){
         pixels = imagePixels;
-        mode = m;
-        if (mode.equals("P1")){
-            type = 1;
-        }
-        else if (mode.equals("P2") || mode.equals("P3")){
-            type = 255;
-        }
     }
 
     public int height(){
-        return  pixels.length;
+        return pixels.length;
     }
 
     public int width(){
@@ -39,12 +30,16 @@ public class Image {
         for (int row = 0; row < numRows; row++){
             for (int col = 0; col < numCols; col++){
                 int pixel = buffImg.getRGB(col, row);
-                rgbPixels[row][col][0] = model.getRed(pixel);
-                rgbPixels[row][col][1] = model.getGreen(pixel);
-                rgbPixels[row][col][2] = model.getBlue(pixel);
+
+                int[] p = {model.getRed(pixel), model.getGreen(pixel), model.getBlue(pixel)};
+                
+                if ((model.getAlpha(pixel) == 0) && (p[0] + p[1] + p[2] == 0)){
+                    p[0] = 255; p[1] = 255; p[2] = 255;
+                }
+                rgbPixels[row][col] = p;      
             }
         }
-        return new Image(rgbPixels, "P3");
+        return new Image(rgbPixels);
     }
 
     public Image toNegative(){
@@ -52,40 +47,43 @@ public class Image {
         for (int x = 0; x < pixels.length; x++){
             for (int y = 0; y < pixels[0].length; y++){
                 for (int z = 0; z < pixels[0][0].length; z++){
-                    output[x][y][z] = type - pixels[x][y][z];
+                    output[x][y][z] = 255 - pixels[x][y][z];
                 }
             }
         }
-        return new Image(output, mode);
+        return new Image(output);
     }
 
     public Image toGrayScale(){
-        int[][][] output = new int[pixels.length][pixels[0].length][1];
+        int[][][] output = new int[pixels.length][pixels[0].length][pixels[0][0].length];
         for (int x = 0; x < pixels.length; x++){
             for (int y = 0; y < pixels[0].length; y++){
-                output[x][y][0] = (pixels[x][y][0] + pixels[x][y][1] + pixels[x][y][2]) / 3;
+                int newpixel = (pixels[x][y][0] + pixels[x][y][1] + pixels[x][y][2]) / 3;
+                int[] pixel = {newpixel, newpixel, newpixel};
+                output[x][y] = pixel;
             }
         }
-        return new Image(output, "P2");
+        return new Image(output);
     }
 
     public Image toBW(){
         int[][][] output = new int[pixels.length][pixels[0].length][1];
         for (int x = 0; x < pixels.length; x++){
             for (int y = 0; y < pixels[0].length; y++){
-                int sum = 0;
+                int sum = 0, pixel = 255;
+
                 for (int z = 0; z < pixels[0][0].length; z++){
                     sum += pixels[x][y][z];
                 }
                 if ((sum / pixels[0][0].length) > 127){
-                    output[x][y][0] = 0;
+                    pixel = 0;
                 }
-                else{
-                    output[x][y][0] = 1;
-                }
+                int[] p = {pixel, pixel, pixel};
+                output[x][y] = p;
+
             }
         }
-        return new Image(output, "P1");
+        return new Image(output);
     }
 
     public Image insert(Image image){
@@ -93,17 +91,36 @@ public class Image {
     }
 
     public Image insert(Image image, String alignment){
+        String alignmentX = "", alignmentY = "";
+
         if (alignment.equals("center")){
-            return insert(image, (this.height() / 2) -  (image.height() / 2), (this.width() / 2) -  (image.width() / 2));
-        } 
-        return null;
+            alignmentX = "center";
+            alignmentY = "center";
+        }
+        return insert(image, alignmentX, alignmentY);
+    }
+
+    public Image insert(Image image, String alignementX, String alignmentY){
+        return insert(image, alignementX, alignmentY, 0, 0);
+    }
+
+    public Image insert(Image image, String alignementX, String alignmentY, int offsetx, int offsety){
+        int startx = 0, starty = 0;
+
+        if (alignementX.equals("center")){
+            startx = (this.height() / 2) -  (image.height() / 2);
+        }
+
+        if (alignmentY.equals("center")){
+            starty = (this.width() / 2) -  (image.width() / 2);
+        }
+        startx += offsetx;
+        starty += offsety;
+        return insert(image, startx, starty);
     }
 
     public Image insert(Image image, int startx, int starty){
-        if (! this.mode.equals(image.mode)){ return null; }
-
         int[][][] output = pixels;
-
         for (int x = startx; (x - startx) < this.pixels.length &&  (x - startx) < image.pixels.length; x++){
             for (int y = starty; (y - starty) < this.pixels[0].length &&  (y - starty) < image.pixels[0].length; y++){
                 for (int z = 0; z < this.pixels[0][0].length &&  z < image.pixels[0][0].length; z++){
@@ -111,7 +128,7 @@ public class Image {
                 }
             }
         }
-        return new Image(output, mode);
+        return new Image(output);
     }
 
     public Image resize(int newheight, int newwidth){
@@ -152,7 +169,7 @@ public class Image {
             }
         }
        
-        return new Image(output, mode);
+        return new Image(output);
     }
 
     public void saveAs(String filename) throws IOException{
@@ -160,7 +177,7 @@ public class Image {
         File file = new File(filename);
         file.createNewFile(); 
         FileWriter writer = new FileWriter(file);
-        writer.write(mode + "\n" + pixels[0].length + " " + pixels.length + "\n" + type + "\n");
+        writer.write("P3\n" + pixels[0].length + " " + pixels.length + "\n255\n");
 
         for (int x = 0; x < pixels.length; x++){
             for (int y = 0; y < pixels[0].length; y++){
