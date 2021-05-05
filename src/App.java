@@ -4,8 +4,6 @@ public class App {
         String head = "/Users/pierrequereuil/Desktop/head.jpeg";
 
         Image img1 = Image.open(anatole);
-        Image img2 = Image.open(head);
-        Image img3 = img2.insert(img1);
-        img3.saveAs("head_anatole.pbm");
+        img1.resize(100, 1000).saveAs("resized.pbm");;
     }
 }

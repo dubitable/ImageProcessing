@@ -87,9 +87,16 @@ public class Image {
         }
         return new Image(output, "P1");
     }
-    
+
     public Image insert(Image image){
         return insert(image, 0, 0);
+    }
+
+    public Image insert(Image image, String alignment){
+        if (alignment.equals("center")){
+            return insert(image, (this.height() / 2) -  (image.height() / 2), (this.width() / 2) -  (image.width() / 2));
+        } 
+        return null;
     }
 
     public Image insert(Image image, int startx, int starty){
@@ -97,13 +104,54 @@ public class Image {
 
         int[][][] output = pixels;
 
-        for (int x = startx; x < this.pixels.length &&  x < image.pixels.length; x++){
-            for (int y = starty; y < this.pixels[0].length &&  y < image.pixels[0].length; y++){
+        for (int x = startx; (x - startx) < this.pixels.length &&  (x - startx) < image.pixels.length; x++){
+            for (int y = starty; (y - starty) < this.pixels[0].length &&  (y - starty) < image.pixels[0].length; y++){
                 for (int z = 0; z < this.pixels[0][0].length &&  z < image.pixels[0][0].length; z++){
-                    output[x][y][z] = image.pixels[x][y][z];
+                    output[x][y][z] = image.pixels[x - startx][y - starty][z];
                 }
             }
         }
+        return new Image(output, mode);
+    }
+
+    public Image resize(int newheight, int newwidth){
+        int[][][] output = new int[newheight][newwidth][pixels[0][0].length];
+
+        if (newheight < height()){
+            for (int x = 0;  x < height(); x++){
+                int newx = (int) ((double) (x * newheight) / height());
+                if (newwidth < height()){
+                    for (int y = 0; y < width(); y++){
+                        int newy = (int) ((double) (y * newwidth) / width());
+                        output[newx][newy] = pixels[x][y];
+                    }
+                }
+                else{
+                    for (int y = 0; y < newwidth; y++){
+                        int newy = (int) ((double) (y * width()) / newwidth);
+                        output[newx][y] = pixels[x][newy];
+                    }
+                }
+            }
+        }
+        else{
+            for (int x = 0;  x < newheight; x++){
+                int newx = (int) ((double) (x * height()) / newheight);
+                if (newwidth < height()){
+                    for (int y = 0; y < width(); y++){
+                        int newy = (int) ((double) (y * newwidth) / width());
+                        output[x][newy] = pixels[newx][y];
+                    }
+                }
+                else{
+                    for (int y = 0; y < newwidth; y++){
+                        int newy = (int) ((double) (y * width()) / newwidth);
+                        output[x][y] = pixels[newx][newy];
+                    }
+                }
+            }
+        }
+       
         return new Image(output, mode);
     }
 
