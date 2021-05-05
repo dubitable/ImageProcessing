@@ -3,23 +3,22 @@ import java.io.*;
 import javax.imageio.ImageIO;
 
 public class Image {
-    private int[][] pixels;
-    private int[][][] rgbPixels;
+    private int[][][] pixels;
     private String mode;
+    private int type;
 
-    public Image(int[][] imagePixels, String m){
+    public Image(int[][][] imagePixels, String m){
         pixels = imagePixels;
-        rgbPixels = null;
         mode = m;
+        if (mode.equals("P1")){
+            type = 1;
+        }
+        else if (mode.equals("P2") || mode.equals("P3")){
+            type = 255;
+        }
     }
 
-    public Image(int[][][] rgb){
-        pixels = null;
-        rgbPixels = rgb;
-        mode = "P3";
-    }
-
-    public static Image openRGB(String filename){
+    public static Image open(String filename){
         BufferedImage buffImg;
 
         try{ buffImg = ImageIO.read(new File(filename)); }
@@ -37,7 +36,28 @@ public class Image {
                 rgbPixels[row][col][2] = model.getBlue(pixel);
             }
         }
-        return new Image(rgbPixels);
+        return new Image(rgbPixels, "P3");
+    }
+
+    public Image toNegative(){
+        for (int x = 0; x < pixels.length; x++){
+            for (int y = 0; y < pixels[0].length; y++){
+                for (int z = 0; z < pixels[0][0].length; z++){
+                    pixels[x][y][z] = type - pixels[x][y][z];
+                }
+            }
+        }
+        return this;
+    }
+
+    public Image toGrayScale(){
+        int[][][] output = new int[pixels.length][pixels[0].length][1];
+        for (int x = 0; x < pixels.length; x++){
+            for (int y = 0; y < pixels[0].length; y++){
+                output[x][y][0] = (pixels[x][y][0] + pixels[x][y][1] + pixels[x][y][2]) / 3;
+            }
+        }
+        return new Image(output, "P2");
     }
 
     public void saveAs(String filename) throws IOException{
@@ -45,22 +65,17 @@ public class Image {
         File file = new File(filename);
         file.createNewFile(); 
         FileWriter writer = new FileWriter(file);
-        writer.write(mode + "\n");
+        writer.write(mode + "\n" + pixels[0].length + " " + pixels.length + "\n" + type + "\n");
 
-        if (mode == "P3"){
-            writer.append(rgbPixels[0].length + " " + rgbPixels.length + "\n" + 255 + "\n");
-
-            for (int x = 0; x < rgbPixels.length; x++){
-                for (int y = 0; y < rgbPixels[0].length; y++){
-                    for (int z = 0; z < rgbPixels[0][0].length; z++){
-                        writer.append(rgbPixels[x][y][z] + " ");
-                    }
+        for (int x = 0; x < pixels.length; x++){
+            for (int y = 0; y < pixels[0].length; y++){
+                for (int z = 0; z < pixels[0][0].length; z++){
+                    writer.append(pixels[x][y][z] + " ");
                 }
-                writer.append("\n");
             }
+            writer.append("\n");
         }
         writer.close();
-
     }
 
 }
