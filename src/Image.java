@@ -87,6 +87,25 @@ public class Image {
         }
         return new Image(output, "P1");
     }
+    
+    public Image insert(Image image){
+        return insert(image, 0, 0);
+    }
+
+    public Image insert(Image image, int startx, int starty){
+        if (! this.mode.equals(image.mode)){ return null; }
+
+        int[][][] output = pixels;
+
+        for (int x = startx; x < this.pixels.length &&  x < image.pixels.length; x++){
+            for (int y = starty; y < this.pixels[0].length &&  y < image.pixels[0].length; y++){
+                for (int z = 0; z < this.pixels[0][0].length &&  z < image.pixels[0][0].length; z++){
+                    output[x][y][z] = image.pixels[x][y][z];
+                }
+            }
+        }
+        return new Image(output, mode);
+    }
 
     public void saveAs(String filename) throws IOException{
         filename = "images/" + filename;
