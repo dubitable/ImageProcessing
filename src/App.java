@@ -5,7 +5,5 @@ public class App {
 
         Image head = Image.open(img1);
         Image anatole = Image.open(img2);
-        
     }
-
 }

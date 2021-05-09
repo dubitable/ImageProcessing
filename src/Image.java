@@ -1,5 +1,6 @@
 import java.awt.image.*;
 import java.io.*;
+
 import javax.imageio.ImageIO;
 
 public class Image {
@@ -44,14 +45,41 @@ public class Image {
         {0, 1, 2}
     };
 
-    public static double[][] dilution(double kX, double kY){
-        double[][] matrix = {
+    public static double[][] incline1 = {
+        {3, 1},
+        {1, 5}
+    };
+
+    public static double[][] incline2 = {
+        {5, 2},
+        {1, 2}
+    };
+
+    public static double[][] horizontalSym = {
+        {1, 0},
+        {0, -1}
+    };
+
+    public static double[][] verticalSym = {
+        {-1, 0},
+        {0, 1}
+    };
+
+    public static double[][] dilatation(double kX, double kY){
+        double[][] dilatation = {
             {kX, 0},
             {0, kY}
         };
-        return matrix;
+        return dilatation;
+    } 
+
+    public static double[][] rotation(double theta){
+        double[][] rotation = {
+            {Math.cos(theta), -1 * Math.sin(theta)},
+            {Math.sin(theta), Math.cos(theta)}
+        };
+        return rotation;
     }
-   
 
     private int[][][] rgbPixels;
 
@@ -238,13 +266,100 @@ public class Image {
         return new Image(output);
     }
 
+    public static int[] multiplyMatrix(int[] coords, double[][] matrix){
+        int[] newcoords = {
+            (int) ((coords[0] * matrix[0][0]) + (coords[1] * matrix[0][1])), 
+            (int) ((coords[0] * matrix[1][0]) + (coords[1] * matrix[1][1]))
+        };
+        return newcoords;
+    }
+
     public int[] calculateSize(double[][] matrix){
-        return null;
+        int[][] corners = {
+            {0, 0}, 
+            {width(), 0},
+            {width(), height()}, 
+            {0, height()}
+        };
+        int[][] newcorners = new int[corners.length][corners[0].length];
+        for (int i = 0; i < corners.length; i++){
+            newcorners[i] = Image.multiplyMatrix(corners[i], matrix);
+        }
+        int xMin = Math.min(Math.min(newcorners[0][0], newcorners[1][0]), Math.min(newcorners[2][0], newcorners[3][0]));
+        int xMax = Math.max(Math.max(newcorners[0][0], newcorners[1][0]), Math.max(newcorners[2][0], newcorners[3][0]));
+        int yMin = Math.min(Math.min(newcorners[0][1], newcorners[1][1]), Math.min(newcorners[2][1], newcorners[3][1]));
+        int yMax = Math.max(Math.max(newcorners[0][1], newcorners[1][1]), Math.max(newcorners[2][1], newcorners[3][1]));
+
+        int[] output = {xMin, xMax, yMin, yMax};
+        return output;
     } 
 
+    public static double[][] inverseMatrix(double[][] matrix){
+        double dt = (matrix[0][0] * matrix[1][1]) - (matrix[0][1] * matrix[1][0]);
+        double[][] output = {
+            {matrix[1][1] / dt, (-1 * matrix[0][1]) / dt},
+            {(-1 * matrix[1][0]) / dt, matrix[0][0] / dt}
+        };
+        return output;
+    }
+
     public Image applyTransformation(double[][] matrix){
-       
-        return this;
+        int[] size = calculateSize(matrix);
+        int newheight = size[3] - size[2], newwidth = size[1] - size[0];
+        int xMin = size[0], yMin = size[2];
+        int[][][] output = new int[newheight][newwidth][rgbPixels[0][0].length];
+        double[][] inverse = Image.inverseMatrix(matrix);
+
+        if (newwidth < width()){
+            for (int x = 0; x < width(); x++){
+                if (newheight < height()){
+                    for (int y = 0; y < height(); y++){
+                        int newx = (int) ((x * matrix[0][0]) + (y * matrix[0][1]));
+                        int newy = (int) ((x * matrix[1][0]) + (y * matrix[1][1]));
+                        try{
+                            output[newy][newx] = rgbPixels[y][x];
+                        }
+                        catch(Exception e){}
+                    }
+                }
+                else{
+                    for (int y = 0; y < newheight; y++){
+                        int newx = (int) ((x * matrix[0][0]) + (y * matrix[0][1]));
+                        int newy = (int) (((x + xMin) * inverse[1][0]) + (((y + yMin) * inverse[1][1])));
+                        try{
+                            output[y][newx] = rgbPixels[newy][x];
+                        }
+                        catch(Exception e){}
+                    }
+                }
+            }
+        }
+        else{
+            for (int x = 0; x < newwidth; x++){
+                if (newheight < height()){
+                    for (int y = 0; y < height(); y++){
+                        int newx = (int) (((x + xMin) * inverse[0][0]) + ((y + yMin) * inverse[0][1]));
+                        int newy = (int) ((x * matrix[1][0]) + (y * matrix[1][1]));
+                        try{
+                            output[newy][x] = rgbPixels[y][newx];
+                        }
+                        catch(Exception e){}
+                    }
+                }
+                else{
+                    for (int y = 0; y < newheight; y++){
+                        int newx = (int) (((x + xMin) * inverse[0][0]) + ((y + yMin) * inverse[0][1])) ;
+                        int newy = (int) (((x + xMin) * inverse[1][0]) + ((y + yMin) * inverse[1][1]));
+                        try{
+                            output[y][x] = rgbPixels[newy][newx];
+                        }
+                        catch(Exception e){}
+                    }
+                }
+            }
+        }
+        
+        return new Image(output);
     }
     
     public void saveAs(String filename) throws IOException{
