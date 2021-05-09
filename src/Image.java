@@ -3,6 +3,56 @@ import java.io.*;
 import javax.imageio.ImageIO;
 
 public class Image {
+    public static double[][] blur = {
+        {(double) 1/9, (double) 1/9, (double) 1/9},
+        {(double) 1/9, (double) 1/9, (double) 1/9},
+        {(double) 1/9, (double) 1/9, (double) 1/9}
+    };
+    public static double[][] blurGaussian = {
+        {(double) 1/16, (double) 2/16, (double) 1/16},
+        {(double) 2/16, (double) 4/16, (double) 2/16},
+        {(double) 1/16, (double) 2/16, (double) 1/16}
+    };
+
+    public static double[][] sharpen = {
+        {0, -1, 0},
+        {-1, 5, -1},
+        {0, -1, 0}
+    };
+
+    public static double[][] edges = {
+        {-1, -1, -1},
+        {-1, 8, -1},
+        {-1, -1, -1}
+    };
+
+    public static double[][] edges2 = {
+        {0, 1, 0},
+        {1, -4, 1},
+        {0, 1, 0}
+    };
+
+    public static double[][] edges3 = {
+        {1, 0, -1},
+        {0, 0, 0},
+        {-1, 0, 1}
+    };
+
+    public static double[][] stamped = {
+        {-2, -1, 0},
+        {-1, 1, 1},
+        {0, 1, 2}
+    };
+
+    public static double[][] dilution(double kX, double kY){
+        double[][] matrix = {
+            {kX, 0},
+            {0, kY}
+        };
+        return matrix;
+    }
+   
+
     private int[][][] rgbPixels;
 
     public Image(int[][][] pixels){
@@ -15,6 +65,10 @@ public class Image {
 
     public int width(){
         return rgbPixels[0].length;
+    }
+
+    public int depth(){
+        return rgbPixels[0][0].length;
     }
 
     public int[][][] rgbPixels(){
@@ -46,12 +100,17 @@ public class Image {
         return new Image(rgbPixels);
     }
 
+    public static Image newImage(int height, int width){
+        int[][][] output = new int[height][width][3];
+        return new Image(output);
+    }
+
     public Image toNegative(){
-        int[][][] output = new int[rgbPixels.length][rgbPixels[0].length][rgbPixels[0][0].length];
-        for (int x = 0; x < rgbPixels.length; x++){
-            for (int y = 0; y < rgbPixels[0].length; y++){
-                for (int z = 0; z < rgbPixels[0][0].length; z++){
-                    output[x][y][z] = 255 - rgbPixels[x][y][z];
+        int[][][] output = new int[height()][width()][depth()];
+        for (int row = 0; row < height(); row++){
+            for (int col = 0; col < width(); col++){
+                for (int depth = 0; depth < depth(); depth++){
+                    output[row][col][depth] = 255 - rgbPixels[row][col][depth];
                 }
             }
         }
@@ -59,31 +118,31 @@ public class Image {
     }
     
     public Image toGrayScale(){
-        int[][][] output = new int[rgbPixels.length][rgbPixels[0].length][rgbPixels[0][0].length];
-        for (int x = 0; x < rgbPixels.length; x++){
-            for (int y = 0; y < rgbPixels[0].length; y++){
-                int newpixel = (rgbPixels[x][y][0] + rgbPixels[x][y][1] + rgbPixels[x][y][2]) / 3;
+        int[][][] output = new int[height()][width()][depth()];
+        for (int row = 0; row < height(); row++){
+            for (int col = 0; col < width(); col++){
+                int newpixel = (rgbPixels[row][col][0] + rgbPixels[row][col][1] + rgbPixels[row][col][2]) / 3;
                 int[] pixel = {newpixel, newpixel, newpixel};
-                output[x][y] = pixel;
+                output[row][col] = pixel;
             }
         }
         return new Image(output);
     }
     
     public Image toBW(){
-        int[][][] output = new int[rgbPixels.length][rgbPixels[0].length][1];
-        for (int x = 0; x < rgbPixels.length; x++){
-            for (int y = 0; y < rgbPixels[0].length; y++){
+        int[][][] output = new int[height()][width()][1];
+        for (int row = 0; row < height(); row++){
+            for (int col = 0; col < width(); col++){
                 int sum = 0, pixel = 255;
     
-                for (int z = 0; z < rgbPixels[0][0].length; z++){
-                    sum += rgbPixels[x][y][z];
+                for (int depth = 0; depth < depth(); depth++){
+                    sum += rgbPixels[row][col][depth];
                 }
-                if ((sum / rgbPixels[0][0].length) > 127){
+                if ((sum / depth()) > 127){
                     pixel = 0;
                 }
                 int[] p = {pixel, pixel, pixel};
-                output[x][y] = p;
+                output[row][col] = p;
     
             }
         }
@@ -94,41 +153,12 @@ public class Image {
         return insert(image, 0, 0);
     }
     
-    public Image insert(Image image, String alignment){
-        String alignmentX = "", alignmentY = "";
-    
-        if (alignment.equals("center")){
-            alignmentX = "center";
-            alignmentY = "center";
-        }
-        return insert(image, alignmentX, alignmentY);
-    }
-    
-    public Image insert(Image image, String alignementX, String alignmentY){
-        return insert(image, alignementX, alignmentY, 0, 0);
-    }
-    
-    public Image insert(Image image, String alignementX, String alignmentY, int offsetx, int offsety){
-        int startx = 0, starty = 0;
-    
-        if (alignementX.equals("center")){
-            startx = (this.height() / 2) -  (image.height() / 2);
-        }
-    
-        if (alignmentY.equals("center")){
-            starty = (this.width() / 2) -  (image.width() / 2);
-        }
-        startx += offsetx;
-        starty += offsety;
-        return insert(image, startx, starty);
-    }
-    
-    public Image insert(Image image, int startx, int starty){
+    public Image insert(Image image, int startRow, int startCol){
         int[][][] output = rgbPixels;
-        for (int x = startx; (x - startx) < this.rgbPixels.length &&  (x - startx) < image.rgbPixels.length; x++){
-            for (int y = starty; (y - starty) < this.rgbPixels[0].length &&  (y - starty) < image.rgbPixels[0].length; y++){
-                for (int z = 0; z < this.rgbPixels[0][0].length &&  z < image.rgbPixels[0][0].length; z++){
-                    output[x][y][z] = image.rgbPixels[x - startx][y - starty][z];
+        for (int row = startRow; (row - startRow) < this.height() &&  (row - startRow) < image.height(); row++){
+            for (int col = startCol; (col - startCol) < this.width() &&  (col - startCol) < image.width(); col++){
+                for (int depth = 0; depth < this.depth() &&  depth < image.depth(); depth++){
+                    output[row][col][depth] = image.rgbPixels[row - startRow][col - startCol][depth];
                 }
             }
         }
@@ -136,38 +166,38 @@ public class Image {
     }
     
     public Image resize(int newheight, int newwidth){
-        int[][][] output = new int[newheight][newwidth][rgbPixels[0][0].length];
+        int[][][] output = new int[newheight][newwidth][depth()];
     
         if (newheight < height()){
-            for (int x = 0;  x < height(); x++){
-                int newx = (int) ((double) (x * newheight) / height());
+            for (int row = 0;  row < height(); row++){
+                int newRow = (int) ((double) (row * newheight) / height());
                 if (newwidth < height()){
-                    for (int y = 0; y < width(); y++){
-                        int newy = (int) ((double) (y * newwidth) / width());
-                        output[newx][newy] = rgbPixels[x][y];
+                    for (int col = 0; col < width(); col++){
+                        int newCol = (int) ((double) (col * newwidth) / width());
+                        output[newRow][newCol] = rgbPixels[row][col];
                     }
                 }
                 else{
-                    for (int y = 0; y < newwidth; y++){
-                        int newy = (int) ((double) (y * width()) / newwidth);
-                        output[newx][y] = rgbPixels[x][newy];
+                    for (int col = 0; col < newwidth; col++){
+                        int newCol = (int) ((double) (col * width()) / newwidth);
+                        output[newRow][col] = rgbPixels[row][newCol];
                     }
                 }
             }
         }
         else{
-            for (int x = 0;  x < newheight; x++){
-                int newx = (int) ((double) (x * height()) / newheight);
+            for (int row = 0;  row < newheight; row++){
+                int newRow = (int) ((double) (row * height()) / newheight);
                 if (newwidth < height()){
-                    for (int y = 0; y < width(); y++){
-                        int newy = (int) ((double) (y * newwidth) / width());
-                        output[x][newy] = rgbPixels[newx][y];
+                    for (int col = 0; col < width(); col++){
+                        int newCol = (int) ((double) (col * newwidth) / width());
+                        output[row][newCol] = rgbPixels[newRow][col];
                     }
                 }
                 else{
-                    for (int y = 0; y < newwidth; y++){
-                        int newy = (int) ((double) (y * width()) / newwidth);
-                        output[x][y] = rgbPixels[newx][newy];
+                    for (int col = 0; col < newwidth; col++){
+                        int newy = (int) ((double) (col * width()) / newwidth);
+                        output[row][col] = rgbPixels[newRow][newy];
                     }
                 }
             }
@@ -185,28 +215,36 @@ public class Image {
     }
     
     public Image applyConvolution(double[][] matrix){
-        int[][][] output = new int[rgbPixels.length][rgbPixels[0].length][rgbPixels[0][0].length];
+        int[][][] output = new int[height()][width()][depth()];
         int offseti = ((matrix.length - 1) / 2), offsetj = ((matrix[0].length - 1) / 2);
-        ColorModel model = ColorModel.getRGBdefault();
     
-        for (int x = 0; x < height(); x++){
-            for (int y = 0; y < width(); y++){
-                for (int z = 0; z < rgbPixels[0][0].length; z++){
+        for (int row = 0; row < height(); row++){
+            for (int col = 0; col < width(); col++){
+                for (int depth = 0; depth < depth(); depth++){
                     double sum = 0;
                     for (int i = 0; i < matrix.length; i++){
                         for (int j = 0; j < matrix[0].length; j++){
-                            int newx = Math.floorMod((x + (i - offseti)), height()), newy = Math.floorMod((y + (j - offsetj)), width()); 
-                            sum += rgbPixels[newx][newy][z] * matrix[i][j];
+                            int newRow = Math.floorMod((row + (i - offseti)), height()), newCol = Math.floorMod((row + (j - offsetj)), width()); 
+                            sum += rgbPixels[newRow][newCol][depth] * matrix[i][j];
                         }
                     }
                     if (sum > 255){ sum = 255; }
                     if (sum < 0) { sum = 0; }
-                    output[x][y][z] = (int) sum;
+                    output[row][col][depth] = (int) sum;
                 }
                 
             }
         }
         return new Image(output);
+    }
+
+    public int[] calculateSize(double[][] matrix){
+        return null;
+    } 
+
+    public Image applyTransformation(double[][] matrix){
+       
+        return this;
     }
     
     public void saveAs(String filename) throws IOException{
@@ -214,12 +252,12 @@ public class Image {
         File file = new File(filename);
         file.createNewFile(); 
         FileWriter writer = new FileWriter(file);
-        writer.write("P3\n" + rgbPixels[0].length + " " + rgbPixels.length + "\n255\n");
+        writer.write("P3\n" + width() + " " + height() + "\n255\n");
     
-        for (int x = 0; x < rgbPixels.length; x++){
-            for (int y = 0; y < rgbPixels[0].length; y++){
-                for (int z = 0; z < rgbPixels[0][0].length; z++){
-                    writer.append(rgbPixels[x][y][z] + " ");
+        for (int row = 0; row < height(); row++){
+            for (int col = 0; col < width(); col++){
+                for (int depth = 0; depth < depth(); depth++){
+                    writer.append(rgbPixels[row][col][depth] + " ");
                 }
             }
             writer.append("\n");
