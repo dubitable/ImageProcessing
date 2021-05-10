@@ -252,7 +252,7 @@ public class Image {
                     double sum = 0;
                     for (int i = 0; i < matrix.length; i++){
                         for (int j = 0; j < matrix[0].length; j++){
-                            int newRow = Math.floorMod((row + (i - offseti)), height()), newCol = Math.floorMod((row + (j - offsetj)), width()); 
+                            int newRow = Math.floorMod((row + (i - offseti)), height()), newCol = Math.floorMod((col + (j - offsetj)), width()); 
                             sum += rgbPixels[newRow][newCol][depth] * matrix[i][j];
                         }
                     }
@@ -264,6 +264,7 @@ public class Image {
             }
         }
         return new Image(output);
+        
     }
 
     public static int[] multiplyMatrix(int[] coords, double[][] matrix){
@@ -361,9 +362,13 @@ public class Image {
         
         return new Image(output);
     }
-    
+
     public void saveAs(String filename) throws IOException{
-        filename = "images/" + filename;
+        saveAs(filename, "images");
+    }
+    
+    public void saveAs(String filename, String dir) throws IOException{
+        filename = dir + "/" + filename;
         File file = new File(filename);
         file.createNewFile(); 
         FileWriter writer = new FileWriter(file);
