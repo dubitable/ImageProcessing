@@ -8,10 +8,6 @@ public class App {
 
         head = Image.open(img1);
         anatole = Image.open(img2);
-
-        filters();
-        convolutions();
-        transformations();
     }
 
     public static void filters() throws IOException{
@@ -20,7 +16,7 @@ public class App {
         head.saveAs("head.jpg", dir);
         head.toNegative().saveAs("head_negative.jpg", dir);
 
-        anatole.saveAs("anatole.jpg");
+        anatole.saveAs("anatole.jpg", dir);
         anatole.toNegative().saveAs("anatole_negative.jpg", dir);
 
         head.toGrayScale().saveAs("head_grayscale.jpg", dir);
@@ -84,5 +80,17 @@ public class App {
 
         anatole.applyTransformation(Image.rotation(Math.PI / 3)).saveAs("anatole_rotated.jpg", dir);
         head.applyTransformation(Image.incline1).saveAs("anatole_incline.jpg", dir);
+    }
+
+    public static void experiments() throws IOException{
+        String dir = "images/experiments";
+
+        Image grid = Image.newImage(1000, 1000);
+        grid.insert(anatole.applyConvolution(Image.sharpen, 10).applyTransformation(Image.rotation(- Math.PI / 3)).resize(500, 500), 0, 0);
+        grid.insert(anatole.applyConvolution(Image.blurGaussian, 200).applyTransformation(Image.rotation(Math.PI / 3)).resize(500, 500), 0, 500);
+        grid.insert(anatole.applyConvolution(Image.stamped, 2).applyTransformation(Image.rotation(- Math.PI / 3 * 2)).resize(500, 500), 500, 0);
+        grid.insert(anatole.applyConvolution(Image.edges2, 4).applyTransformation(Image.rotation(Math.PI / 3 * 2)).resize(500, 500), 500, 500);
+        grid.insert(anatole.resize(250, 250), 500 - 125, 500 - 125);
+        grid.saveAs("anatole_moment.jpg", dir);
     }
 }

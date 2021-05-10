@@ -156,8 +156,12 @@ public class Image {
         }
         return new Image(output);
     }
-    
+
     public Image toBW(){
+        return toBW(127);
+    }
+
+    public Image toBW(int threshold){
         int[][][] output = new int[height()][width()][1];
         for (int row = 0; row < height(); row++){
             for (int col = 0; col < width(); col++){
@@ -166,7 +170,7 @@ public class Image {
                 for (int depth = 0; depth < depth(); depth++){
                     sum += rgbPixels[row][col][depth];
                 }
-                if ((sum / depth()) > 127){
+                if ((sum / depth()) > threshold){
                     pixel = 0;
                 }
                 int[] p = {pixel, pixel, pixel};
