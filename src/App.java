@@ -79,7 +79,7 @@ public class App {
         head.applyTransformation(Image.incline1).saveAs("head_incline.jpg", dir);
 
         anatole.applyTransformation(Image.rotation(Math.PI / 3)).saveAs("anatole_rotated.jpg", dir);
-        head.applyTransformation(Image.incline1).saveAs("anatole_incline.jpg", dir);
+        anatole.applyTransformation(Image.incline1).saveAs("anatole_incline.jpg", dir);
     }
 
     public static void experiments() throws IOException{
