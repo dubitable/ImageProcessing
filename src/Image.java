@@ -80,6 +80,7 @@ public class Image {
         return rotation;
     }
 
+    private static String dir = "";
     private int[][][] rgbPixels;
 
     public Image(int[][][] pixels){
@@ -100,6 +101,10 @@ public class Image {
 
     public int[][][] rgbPixels(){
         return rgbPixels;
+    }
+
+    public static void setDir(String directory){
+        dir = directory;
     }
 
     public static Image open(String filename){
@@ -365,12 +370,8 @@ public class Image {
         
         return new Image(output);
     }
-
-    public void saveAs(String filename) throws IOException{
-        saveAs(filename, "images");
-    }
     
-    public void saveAs(String filename, String dir) throws IOException{
+    public void saveAs(String filename) throws IOException{
         filename = dir + "/" + filename;
         File file = new File(filename);
         file.createNewFile(); 
