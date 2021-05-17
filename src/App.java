@@ -1,5 +1,3 @@
-import java.io.IOException;
-
 public class App {
     public static HackImage head, anatole;
     public static void main(String[] args) throws Exception {

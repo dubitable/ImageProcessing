@@ -1,3 +1,5 @@
+import java.io.IOException;
+
 public class HackImage extends Image{
     public HackImage(int[][][] pixels){
         super(pixels);
@@ -42,8 +44,9 @@ public class HackImage extends Image{
     }
 
     public HackImage[] seperateRow(int[][][][] sections){
-        int[][][] output1 = new int[height()/2][width()][depth()];
-        int[][][] output2 = new int[height()/2][width()][depth()];
+        int inter = sections[0].length;
+        int[][][] output1 = new int[(inter * sections.length) / 2][sections[0][0].length][sections[0][0][0].length];
+        int[][][] output2 = new int[(inter * sections.length) / 2][sections[0][0].length][sections[0][0][0].length];
         int i1 = 0, i2 = 0;
 
         for (int sect = 0; sect < sections.length; sect++){
@@ -66,6 +69,19 @@ public class HackImage extends Image{
                     i2++;
                 }
             }
+        }
+        HackImage[] output = {new HackImage(output1), new HackImage(output2)};
+        return output;
+    }
+    
+    public HackImage[] seperateCol(int[][][][] sections){
+        int[][][] output1 = new int[height()][width()/2][depth()];
+        int[][][] output2 = new int[height()][width()/2][depth()];
+        int i1 = 0, i2 = 0;
+
+        for (int sect = 0; sect < sections.length; sect++){
+            int[][][] section = sections[sect];
+            
         }
         HackImage[] output = {new HackImage(output1), new HackImage(output2)};
         return output;
