@@ -8,8 +8,11 @@ public class HackImageTester {
 
         HackImage.setDir("images/hackathon");
         HackImage anatole = new HackImage(Image.open(img2));
-        HackImage[] results = anatole.seperateRow(anatole.sectionRow(50));
-        results[0].saveAs("results1.jpg");
-        results[1].saveAs("results2.jpg");
+
+        int[][][][] sections = anatole.sectionCol(25);
+        HackImage[] results = HackImage.seperateCol(sections);
+
+        results[0].saveAs("why1.jpg");
+        results[1].saveAs("why2.jpg");
     }
 }
