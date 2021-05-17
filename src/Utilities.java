@@ -20,6 +20,16 @@ public class Utilities {
             System.out.println(")");
         }
     }
+    public static void printArray(int[][] matrix){
+        for (int[] arr : matrix){
+            System.out.print("(");
+            for (int elem : arr){
+                System.out.print(" " + elem + " ");
+            }
+            System.out.println(")");
+        }
+    }
+
     public static void printArray(int[] array){
         System.out.print("[");
         for (int elem : array){

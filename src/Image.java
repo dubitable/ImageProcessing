@@ -323,8 +323,8 @@ public class Image {
             for (int x = 0; x < width(); x++){
                 if (newheight < height()){
                     for (int y = 0; y < height(); y++){
-                        int newx = (int) ((x * matrix[0][0]) + (y * matrix[0][1]));
-                        int newy = (int) ((x * matrix[1][0]) + (y * matrix[1][1]));
+                        int newx = Math.abs((int) ((x * matrix[0][0]) + (y * matrix[0][1])));
+                        int newy =  Math.abs((int) ((x * matrix[1][0]) + (y * matrix[1][1])));
                         try{
                             output[newy][newx] = rgbPixels[y][x];
                         }
@@ -333,8 +333,8 @@ public class Image {
                 }
                 else{
                     for (int y = 0; y < newheight; y++){
-                        int newx = (int) ((x * matrix[0][0]) + (y * matrix[0][1]));
-                        int newy = (int) (((x + xMin) * inverse[1][0]) + (((y + yMin) * inverse[1][1])));
+                        int newx =  Math.abs((int) ((x * matrix[0][0]) + (y * matrix[0][1])));
+                        int newy =  Math.abs((int) (((x + xMin) * inverse[1][0]) + (((y + yMin) * inverse[1][1]))));
                         try{
                             output[y][newx] = rgbPixels[newy][x];
                         }
@@ -347,8 +347,8 @@ public class Image {
             for (int x = 0; x < newwidth; x++){
                 if (newheight < height()){
                     for (int y = 0; y < height(); y++){
-                        int newx = (int) (((x + xMin) * inverse[0][0]) + ((y + yMin) * inverse[0][1]));
-                        int newy = (int) ((x * matrix[1][0]) + (y * matrix[1][1]));
+                        int newx =  Math.abs((int) (((x + xMin) * inverse[0][0]) + ((y + yMin) * inverse[0][1])));
+                        int newy =  Math.abs((int) ((x * matrix[1][0]) + (y * matrix[1][1])));
                         try{
                             output[newy][x] = rgbPixels[y][newx];
                         }
@@ -357,8 +357,8 @@ public class Image {
                 }
                 else{
                     for (int y = 0; y < newheight; y++){
-                        int newx = (int) (((x + xMin) * inverse[0][0]) + ((y + yMin) * inverse[0][1])) ;
-                        int newy = (int) (((x + xMin) * inverse[1][0]) + ((y + yMin) * inverse[1][1]));
+                        int newx =  Math.abs((int) (((x + xMin) * inverse[0][0]) + ((y + yMin) * inverse[0][1])));
+                        int newy =  Math.abs((int) (((x + xMin) * inverse[1][0]) + ((y + yMin) * inverse[1][1])));
                         try{
                             output[y][x] = rgbPixels[newy][newx];
                         }
@@ -370,9 +370,30 @@ public class Image {
         
         return new Image(output);
     }
+
+    public Image encode(Image img){
+        int h = img.height(), w = img.width();
+        int[][][] pixels = img.resize(height(), width()).rgbPixels;
+        int[][][] output = new int[height()][width()][depth()];
+        
+        for (int row = 0; row < height(); row++){
+            for (int col = 0; col < width(); col++){
+                for (int depth = 0; depth < depth(); depth++){
+                    int value = pixels[row][col][depth];
+                }
+            }
+        }
+        return this;
+    }
+
+    public String toBinary(int num){
+        String numstring = Integer.toString(num);
+        return "this";
+    }
     
     public void saveAs(String filename) throws IOException{
         filename = dir + "/" + filename;
+        System.out.println(filename);
         File file = new File(filename);
         file.createNewFile(); 
         FileWriter writer = new FileWriter(file);
