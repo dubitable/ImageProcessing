@@ -1,15 +1,26 @@
 import java.io.IOException;
 
 public class HackImageTester {
-    static String img1 = "/Users/pierrequereuil/Desktop/head.jpeg";
-    static String img2 = "/Users/pierrequereuil/Desktop/anatole.png";
-
-    public static void test4() throws IOException{
-
+    public static void topbreeder() throws IOException{
         HackImage.setDir("images/hackathon");
-        HackImage head = new HackImage(Image.open(img1));
-        HackImage anatole = new HackImage(Image.open(img2));
+        String img = "/Users/pierrequereuil/Downloads/h7n-nsi-01-main/images/chien.bmp";
 
-        HackImage.joinCol(head, anatole, 10).saveAs("whydididothis.jpg");
+        HackImage birthday = new HackImage(Image.open(img));
+        HackImage[] results = birthday.seperateCol(10);
+        HackImage[] results1 = results[0].seperateRow(10), results2 = results[1].seperateRow(10);
+        
+        results1[0].saveAs("topbreeder1.jpg");
+        results1[1].saveAs("topbreeder2.jpg");
+        results2[0].saveAs("topbreeder3.jpg");
+        results1[1].saveAs("topbreeder4.jpg");
+    } 
+
+    public static void everydayismybirthday() throws IOException{
+        HackImage.setDir("images/hackathon");
+        String img = "/Users/pierrequereuil/Downloads/h7n-nsi-01-main/images/birthday.png";
+
+        HackImage birthday = new HackImage(Image.open(img));
+        HackImage[] results = birthday.seperateRow(10);
+        HackImage.joinCol(results[0], results[1], 10).saveAs("EverydayismyBirthday.jpg");
     }
 }
