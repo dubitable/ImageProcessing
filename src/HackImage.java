@@ -1,5 +1,3 @@
-import java.io.IOException;
-
 public class HackImage extends Image{
     public HackImage(int[][][] pixels){
         super(pixels);
@@ -9,7 +7,7 @@ public class HackImage extends Image{
         super(img.rgbPixels());
     }
 
-    public int[][][][] sectionRow(int inter){
+    private int[][][][] sectionRow(int inter){
         int[][][] pixels = this.rgbPixels();
         int[][][][] sections = new int[height()/inter][inter][width()][depth()];
         int r = 0;
@@ -25,7 +23,7 @@ public class HackImage extends Image{
         return sections;
     }
 
-    public int[][][][] sectionCol(int inter) throws IOException{
+    private int[][][][] sectionCol(int inter){
         int[][][] pixels = this.rgbPixels();
         int[][][][] sections = new int[width()/inter][height()][inter][depth()];
         int c = 0;
@@ -43,8 +41,8 @@ public class HackImage extends Image{
         return sections;
     }
 
-    public static HackImage[] seperateRow(int[][][][] sections){
-
+    public HackImage[] seperateRow(int inter){
+        int[][][][] sections = sectionRow(inter);
         int[][][] output1 = new int[(sections[0].length * sections.length) / 2][sections[0][0].length][sections[0][0][0].length];
         int[][][] output2 = new int[(sections[0].length * sections.length) / 2][sections[0][0].length][sections[0][0][0].length];
         int i1 = 0, i2 = 0;
@@ -74,7 +72,8 @@ public class HackImage extends Image{
         return output;
     }
 
-    public static HackImage[] seperateCol(int[][][][] sections){
+    public HackImage[] seperateCol(int inter){
+        int[][][][] sections = sectionCol(inter);
         int[][][] output1 = new int[sections[0].length][(sections[0][0].length * sections.length) / 2][sections[0][0][0].length];
         int[][][] output2 = new int[sections[0].length][(sections[0][0].length * sections.length) / 2][sections[0][0][0].length];
         int i1 = 0, i2 = 0;
@@ -106,5 +105,84 @@ public class HackImage extends Image{
         }
         HackImage[] output = {new HackImage(output1), new HackImage(output2)};
         return output;
+    }
+
+    public static HackImage joinRow(HackImage img1, HackImage img2, int inter){
+        int[][][][] sections1 = img1.sectionRow(inter), sections2 = img2.sectionRow(inter);
+        int[][][] output = new int[(sections1.length * sections1[0].length) + (sections2.length * sections2[0].length)][sections1[0][0].length][sections1[0][0][0].length];
+        int i1 = 0, i2 = 0, r = 0;
+
+        for (int sect = 0; sect < sections1.length + sections2.length; sect++){
+            int[][][] section;
+            if (sect % 2 == 0){
+                try{
+                    section = sections1[i1];
+                    i1++;
+                }
+                catch (Exception e){
+                    section = sections2[i2];
+                    i2++;
+                }
+            }
+            else{
+                try{
+                    section = sections2[i2];
+                    i2++;
+                }
+                catch (Exception e){
+                    section = sections1[i1];
+                    i1++;
+                }
+            }
+            for (int row = 0; row < section.length; row++){
+                try{
+                    output[r] = section[row];
+                }
+                catch (Exception e){}
+                r++;
+            }
+        }
+        return new HackImage(output);
+    }
+    public static HackImage joinCol(HackImage img1, HackImage img2, int inter){
+        int[][][][] sections1 = img1.sectionCol(inter), sections2 = img2.sectionCol(inter);
+        int[][][] output = new int[sections1[0].length][(sections1[0][0].length * sections1.length) + (sections2[0][0].length * sections2.length)][sections1[0][0][0].length];
+        int i1 = 0, i2 = 0, c = 0;
+
+        for (int sect = 0; sect < sections1.length + sections2.length; sect++){
+            int[][][] section;
+            if (sect % 2 == 0){
+                try{
+                    section = sections1[i1];
+                    i1++;
+                }
+                catch (Exception e){
+                    section = sections2[i2];
+                    i2++;
+                }
+            }
+            else{
+                try{
+                    section = sections2[i2];
+                    i2++;
+                }
+                catch (Exception e){
+                    section = sections1[i1];
+                    i1++;
+                }
+            }
+            for (int col = 0; col < section[0].length; col++){
+                for (int row = 0; row < section.length; row++){
+                    try{
+                        output[row][c] = section[row][col];
+                    }
+                    catch (Exception e){}
+                    
+                }
+                c++;
+            }
+            
+        }
+        return new HackImage(output);
     }
 }

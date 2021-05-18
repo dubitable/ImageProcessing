@@ -7,12 +7,9 @@ public class HackImageTester {
     public static void test4() throws IOException{
 
         HackImage.setDir("images/hackathon");
+        HackImage head = new HackImage(Image.open(img1));
         HackImage anatole = new HackImage(Image.open(img2));
 
-        int[][][][] sections = anatole.sectionCol(25);
-        HackImage[] results = HackImage.seperateCol(sections);
-
-        results[0].saveAs("why1.jpg");
-        results[1].saveAs("why2.jpg");
+        HackImage.joinCol(head, anatole, 10).saveAs("whydididothis.jpg");
     }
 }
