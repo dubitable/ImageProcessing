@@ -4,6 +4,20 @@ public class ImageTester {
     static String img1 = "/Users/pierrequereuil/Desktop/head.jpeg";
     static String img2 = "/Users/pierrequereuil/Desktop/anatole.png";
 
+    public static void photomaton(int num) throws IOException{
+        Image anatole = Image.open("/Users/pierrequereuil/Desktop/anatole.png");
+        Image.setDir("images/photomaton");
+
+        for (int i = 0; i < num; i++){
+            Image newimage = Image.newImage(anatole.height(), anatole.width());
+            newimage.insert(anatole.resize(anatole.height() / 2, anatole.width() / 2), 0, 0);
+            newimage.insert(anatole.resize(anatole.height() / 2, anatole.width() / 2), anatole.height() / 2, 0);
+            newimage.insert(anatole.resize(anatole.height() / 2, anatole.width() / 2), 0, anatole.width() / 2);
+            newimage.insert(anatole.resize(anatole.height() / 2, anatole.width() / 2), anatole.height() / 2, anatole.width() / 2);
+            anatole = newimage;
+            anatole.saveAs(i + ".jpg");
+        }
+    }
     public static void filters() throws IOException{
         Image head = Image.open(img1);
         Image anatole = Image.open(img2);

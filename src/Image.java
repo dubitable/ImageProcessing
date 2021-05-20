@@ -370,26 +370,6 @@ public class Image {
         
         return new Image(output);
     }
-
-    public Image encode(Image img){
-        int h = img.height(), w = img.width();
-        int[][][] pixels = img.resize(height(), width()).rgbPixels;
-        int[][][] output = new int[height()][width()][depth()];
-        
-        for (int row = 0; row < height(); row++){
-            for (int col = 0; col < width(); col++){
-                for (int depth = 0; depth < depth(); depth++){
-                    int value = pixels[row][col][depth];
-                }
-            }
-        }
-        return this;
-    }
-
-    public String toBinary(int num){
-        String numstring = Integer.toString(num);
-        return "this";
-    }
     
     public void saveAs(String filename) throws IOException{
         filename = dir + "/" + filename;
