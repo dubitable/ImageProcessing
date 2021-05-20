@@ -100,7 +100,6 @@ public class ImageTester {
     }
 
     public static void experiments() throws IOException{
-        Image head = Image.open(img1);
         Image anatole = Image.open(img2);
         
         Image.setDir("images/experiments");
