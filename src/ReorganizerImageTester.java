@@ -8,7 +8,12 @@ public class ReorganizerImageTester {
         ReorganizerImage anatole = new ReorganizerImage(Image.open(img1));
         ReorganizerImage head = new ReorganizerImage(Image.open(img2));
 
-        Image.setDir("images");
-        anatole.reoganize(anatole).saveAs("yeah.jpg");
+        Image.setDir("images/reorganizing");
+
+        head.reoganize(anatole).saveAs("head_reorganized_anatole.jpg");
+        anatole.reoganize(head).saveAs("anatole_reorganized_head.jpg");
+
+        anatole.reoganize(anatole).saveAs("anatole_reorganized_anatole.jpg");
+        head.reoganize(head).saveAs("head_reorganized_head.jpg");
     }   
 }
