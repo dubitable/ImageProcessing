@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.Set;
+
 public class Utilities {    
     public static void printArray(int[][][] matrix){
         for (int[][] array : matrix){
@@ -31,6 +34,21 @@ public class Utilities {
     }
 
     public static void printArray(int[] array){
+        System.out.print("[");
+        for (int elem : array){
+            System.out.print(" " + elem + " ");
+        }
+        System.out.println("]");
+    }
+
+    public static void printArray(Set<Integer> array){
+        System.out.print("[");
+        for (int elem : array){
+            System.out.print(" " + elem + " ");
+        }
+        System.out.println("]");
+    }
+    public static void printArray(ArrayList<Integer> array){
         System.out.print("[");
         for (int elem : array){
             System.out.print(" " + elem + " ");

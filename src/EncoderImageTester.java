@@ -1,7 +1,7 @@
 import java.io.IOException;
 
 public class EncoderImageTester { 
-    public static void test1() throws IOException{
+    public static void test() throws IOException{
         String img1 = "/Users/pierrequereuil/Desktop/anatole.png";
         String img2 = "/Users/pierrequereuil/Desktop/head.jpeg";
 
