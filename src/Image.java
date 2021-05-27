@@ -370,6 +370,21 @@ public class Image {
         
         return new Image(output);
     }
+
+    public Image halve(){
+        int[][][] output = new int[height() / 2][width() / 2][depth()];
+        int n = height() * width();
+        for (int row = 0; row < height(); row++){
+            for (int col = 0; col < width(); col++){
+                int newrow = (n*(row%2) + row) /2;
+                int newcol = (n*(col%2) + col) /2;
+                if (newrow < output.length && newcol < output[0].length){
+                    output[newrow][newcol] = rgbPixels[row][col];
+                }
+            }
+        }
+        return new Image(output);
+    }
     
     public void saveAs(String filename) throws IOException{
         filename = dir + "/" + filename;

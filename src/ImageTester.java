@@ -5,17 +5,15 @@ public class ImageTester {
     static String img2 = "/Users/pierrequereuil/Desktop/image.png";
 
     public static void photomaton(Image image, int num) throws IOException{
-        Image.setDir("images/photomaton2");
-
         for (int i = 0; i < num; i++){
+            image.saveAs(i + ".jpg");
             Image newimage = Image.newImage(image.height(), image.width());
-            Image resized = image.applyTransformation(Image.dilatation(0.5, 0.5));
+            Image resized = image.halve();
             newimage.insert(resized, 0, 0);
             newimage.insert(resized, image.height() / 2, 0);
             newimage.insert(resized, 0, image.width() / 2);
             newimage.insert(resized, image.height() / 2, image.width() / 2);
             image = newimage;
-            image.saveAs(i + ".jpg");
         }
     }
     public static void filters() throws IOException{
