@@ -2,20 +2,20 @@ import java.io.IOException;
 
 public class ImageTester {
     static String img1 = "/Users/pierrequereuil/Desktop/head.jpeg";
-    static String img2 = "/Users/pierrequereuil/Desktop/anatole.png";
+    static String img2 = "/Users/pierrequereuil/Desktop/image.png";
 
-    public static void photomaton(int num) throws IOException{
-        Image anatole = Image.open("/Users/pierrequereuil/Desktop/anatole.png");
-        Image.setDir("images/photomaton");
+    public static void photomaton(Image image, int num) throws IOException{
+        Image.setDir("images/photomaton2");
 
         for (int i = 0; i < num; i++){
-            Image newimage = Image.newImage(anatole.height(), anatole.width());
-            newimage.insert(anatole.resize(anatole.height() / 2, anatole.width() / 2), 0, 0);
-            newimage.insert(anatole.resize(anatole.height() / 2, anatole.width() / 2), anatole.height() / 2, 0);
-            newimage.insert(anatole.resize(anatole.height() / 2, anatole.width() / 2), 0, anatole.width() / 2);
-            newimage.insert(anatole.resize(anatole.height() / 2, anatole.width() / 2), anatole.height() / 2, anatole.width() / 2);
-            anatole = newimage;
-            anatole.saveAs(i + ".jpg");
+            Image newimage = Image.newImage(image.height(), image.width());
+            Image resized = image.applyTransformation(Image.dilatation(0.5, 0.5));
+            newimage.insert(resized, 0, 0);
+            newimage.insert(resized, image.height() / 2, 0);
+            newimage.insert(resized, 0, image.width() / 2);
+            newimage.insert(resized, image.height() / 2, image.width() / 2);
+            image = newimage;
+            image.saveAs(i + ".jpg");
         }
     }
     public static void filters() throws IOException{
