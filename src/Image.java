@@ -113,14 +113,19 @@ public class Image {
         try{ buffImg = ImageIO.read(new File(filename)); }
         catch(Exception exception){ return null; }
 
+        return Image.open(buffImg);
+    }
+
+    public static Image open(BufferedImage buffImg){
         int numRows = buffImg.getHeight(), numCols = buffImg.getWidth();
         int[][][] rgbPixels = new int[numRows][numCols][3];
         ColorModel model = ColorModel.getRGBdefault();
 
+        System.out.println(buffImg.getRGB(10, 10));
+
         for (int row = 0; row < numRows; row++){
             for (int col = 0; col < numCols; col++){
                 int pixel = buffImg.getRGB(col, row);
-
                 int[] p = {model.getRed(pixel), model.getGreen(pixel), model.getBlue(pixel)};
                 
                 if ((model.getAlpha(pixel) == 0) && (p[0] + p[1] + p[2] == 0)){
@@ -386,7 +391,7 @@ public class Image {
         return new Image(output);
     }
     
-    public void saveAs(String filename) throws IOException{
+    public void saveAsPBM(String filename) throws IOException{
         filename = dir + "/" + filename;
         System.out.println(filename);
         File file = new File(filename);
@@ -405,4 +410,20 @@ public class Image {
         writer.close();
     }
 
+    public void saveAs(String filename) throws IOException{
+        filename = dir + "/" + filename;
+        BufferedImage img = new BufferedImage(width(), height(), BufferedImage.TYPE_INT_RGB);
+
+        for (int row = 0; row < height(); row++){
+            for (int col = 0; col < width(); col++){
+                int[] pixel = rgbPixels[row][col];
+                int rgb = pixel[0];
+                rgb = (rgb << 8) + pixel[1];
+                rgb = (rgb << 8) + pixel[2];
+                img.setRGB(col, row, rgb);
+            }
+        }
+        File file = new File(filename);
+        ImageIO.write(img, "jpg", file);
+    }
 }
