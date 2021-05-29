@@ -15,7 +15,7 @@ public class Video {
         int n = grabber.getLengthInFrames();
         for (int i = 0 ; i <  n; i++) {
             Image frame = Image.open(grabber.grab().getBufferedImage());
-            frame.saveAsPBM(i+".jpg");
+            frame.saveAs(i+".jpg");
         }
         grabber.stop();
     } 
