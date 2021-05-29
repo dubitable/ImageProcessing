@@ -7,13 +7,20 @@ public class EncoderImageTester {
 
         EncoderImage anatole = new EncoderImage(Image.open(img1));
         EncoderImage head = new EncoderImage(Image.open(img2));
-       
+    
+        Image.setDir("images/encoding");
 
         EncoderImage encoded = head.encode(anatole);
         EncoderImage decoded = encoded.decode(200);
-        
-        Image.setDir("images/encoding");
-        encoded.saveAsPBM("anatole_head.jpg");
-        decoded.saveAsPBM("anatole_head_decoded.jpg");
+       
+        encoded.saveAs("anatole_head.jpg");
+        decoded.saveAs("anatole_head_decoded.jpg");
+
+        encoded = anatole.encode(head);
+        decoded = encoded.decode(200);
+       
+        encoded.saveAs("head_anatole.jpg");
+        decoded.saveAs("head_anatole_decoded.jpg");
+
     }
 }

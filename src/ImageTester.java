@@ -6,7 +6,6 @@ public class ImageTester {
 
     public static void saving() throws IOException{
         Image head = Image.open(img1);
-        Image anatole = Image.open(img2);
         Image.setDir("images");
         head.saveAs("yeah.jpg");
     }
