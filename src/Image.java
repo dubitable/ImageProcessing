@@ -326,8 +326,8 @@ public class Image {
             for (int x = 0; x < width(); x++){
                 if (newheight < height()){
                     for (int y = 0; y < height(); y++){
-                        int newx = Math.abs((int) ((x * matrix[0][0]) + (y * matrix[0][1])));
-                        int newy =  Math.abs((int) ((x * matrix[1][0]) + (y * matrix[1][1])));
+                        int newx = (int) ((x * matrix[0][0]) + (y * matrix[0][1]));
+                        int newy = (int) ((x * matrix[1][0]) + (y * matrix[1][1]));
                         try{
                             output[newy][newx] = rgbPixels[y][x];
                         }
@@ -336,8 +336,8 @@ public class Image {
                 }
                 else{
                     for (int y = 0; y < newheight; y++){
-                        int newx =  Math.abs((int) ((x * matrix[0][0]) + (y * matrix[0][1])));
-                        int newy =  Math.abs((int) (((x + xMin) * inverse[1][0]) + (((y + yMin) * inverse[1][1]))));
+                        int newx = (int) ((x * matrix[0][0]) + (y * matrix[0][1]));
+                        int newy = (int) (((x + xMin) * inverse[1][0]) + (((y + yMin) * inverse[1][1])));
                         try{
                             output[y][newx] = rgbPixels[newy][x];
                         }
@@ -350,8 +350,8 @@ public class Image {
             for (int x = 0; x < newwidth; x++){
                 if (newheight < height()){
                     for (int y = 0; y < height(); y++){
-                        int newx =  Math.abs((int) (((x + xMin) * inverse[0][0]) + ((y + yMin) * inverse[0][1])));
-                        int newy =  Math.abs((int) ((x * matrix[1][0]) + (y * matrix[1][1])));
+                        int newx = (int) (((x + xMin) * inverse[0][0]) + ((y + yMin) * inverse[0][1]));
+                        int newy = (int) ((x * matrix[1][0]) + (y * matrix[1][1]));
                         try{
                             output[newy][x] = rgbPixels[y][newx];
                         }
@@ -360,8 +360,8 @@ public class Image {
                 }
                 else{
                     for (int y = 0; y < newheight; y++){
-                        int newx =  Math.abs((int) (((x + xMin) * inverse[0][0]) + ((y + yMin) * inverse[0][1])));
-                        int newy =  Math.abs((int) (((x + xMin) * inverse[1][0]) + ((y + yMin) * inverse[1][1])));
+                        int newx = (int) (((x + xMin) * inverse[0][0]) + ((y + yMin) * inverse[0][1])) ;
+                        int newy = (int) (((x + xMin) * inverse[1][0]) + ((y + yMin) * inverse[1][1]));
                         try{
                             output[y][x] = rgbPixels[newy][newx];
                         }
@@ -371,21 +371,6 @@ public class Image {
             }
         }
         
-        return new Image(output);
-    }
-
-    public Image halve(){
-        int[][][] output = new int[height() / 2][width() / 2][depth()];
-        int n = height() * width();
-        for (int row = 0; row < height(); row++){
-            for (int col = 0; col < width(); col++){
-                int newrow = (n*(row%2) + row) /2;
-                int newcol = (n*(col%2) + col) /2;
-                if (newrow < output.length && newcol < output[0].length){
-                    output[newrow][newcol] = rgbPixels[row][col];
-                }
-            }
-        }
         return new Image(output);
     }
     

@@ -14,7 +14,7 @@ public class ImageTester {
         for (int i = 0; i < num; i++){
             image.saveAs(i + ".jpg");
             Image newimage = Image.newImage(image.height(), image.width());
-            Image resized = image.halve();
+            Image resized = image.applyTransformation(Image.dilatation(0.5, 0.5));
             newimage.insert(resized, 0, 0);
             newimage.insert(resized, image.height() / 2, 0);
             newimage.insert(resized, 0, image.width() / 2);
