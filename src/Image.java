@@ -121,8 +121,6 @@ public class Image {
         int[][][] rgbPixels = new int[numRows][numCols][3];
         ColorModel model = ColorModel.getRGBdefault();
 
-        System.out.println(buffImg.getRGB(10, 10));
-
         for (int row = 0; row < numRows; row++){
             for (int col = 0; col < numCols; col++){
                 int pixel = buffImg.getRGB(col, row);

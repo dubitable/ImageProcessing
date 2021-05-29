@@ -1,3 +1,5 @@
 .DS_Store
 images/photomaton1/*
 images/photomaton2/*
+images/videos/*
+lib/javacv-bin/*
