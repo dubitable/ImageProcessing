@@ -10,10 +10,10 @@ public class ReorganizerImageTester {
 
         Image.setDir("images/reorganizing");
 
-        head.reoganize(anatole).saveAs("head_reorganized_anatole.jpg");
-        anatole.reoganize(head).saveAs("anatole_reorganized_head.jpg");
+        head.reoganize(anatole).saveAsPBM("head_reorganized_anatole.jpg");
+        anatole.reoganize(head).saveAsPBM("anatole_reorganized_head.jpg");
 
-        anatole.reoganize(anatole).saveAs("anatole_reorganized_anatole.jpg");
-        head.reoganize(head).saveAs("head_reorganized_head.jpg");
+        anatole.reoganize(anatole).saveAsPBM("anatole_reorganized_anatole.jpg");
+        head.reoganize(head).saveAsPBM("head_reorganized_head.jpg");
     }   
 }

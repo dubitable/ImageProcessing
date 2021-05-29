@@ -413,7 +413,7 @@ public class Image {
     public void saveAs(String filename) throws IOException{
         filename = dir + "/" + filename;
         BufferedImage img = new BufferedImage(width(), height(), BufferedImage.TYPE_INT_RGB);
-
+        System.out.println(filename);
         for (int row = 0; row < height(); row++){
             for (int col = 0; col < width(); col++){
                 int[] pixel = rgbPixels[row][col];

@@ -13,7 +13,7 @@ public class EncoderImageTester {
         EncoderImage decoded = encoded.decode(200);
         
         Image.setDir("images/encoding");
-        encoded.saveAs("anatole_head.jpg");
-        decoded.saveAs("anatole_head_decoded.jpg");
+        encoded.saveAsPBM("anatole_head.jpg");
+        decoded.saveAsPBM("anatole_head_decoded.jpg");
     }
 }

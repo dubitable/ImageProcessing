@@ -9,10 +9,10 @@ public class HackImageTester {
         HackImage[] results = birthday.seperateCol(10);
         HackImage[] results1 = results[0].seperateRow(10), results2 = results[1].seperateRow(10);
         
-        results1[0].saveAs("topbreeder1.jpg");
-        results1[1].saveAs("topbreeder2.jpg");
-        results2[0].saveAs("topbreeder3.jpg");
-        results1[1].saveAs("topbreeder4.jpg");
+        results1[0].saveAsPBM("topbreeder1.jpg");
+        results1[1].saveAsPBM("topbreeder2.jpg");
+        results2[0].saveAsPBM("topbreeder3.jpg");
+        results1[1].saveAsPBM("topbreeder4.jpg");
     } 
 
     public static void everydayismybirthday() throws IOException{
@@ -21,6 +21,6 @@ public class HackImageTester {
 
         HackImage birthday = new HackImage(Image.open(img));
         HackImage[] results = birthday.seperateRow(10);
-        HackImage.joinCol(results[0], results[1], 10).saveAs("EverydayismyBirthday.jpg");
+        HackImage.joinCol(results[0], results[1], 10).saveAsPBM("EverydayismyBirthday.jpg");
     }
 }
