@@ -54,6 +54,14 @@ public class Image {
         {1, 2}
     };
 
+    public static double[][] randomConvolution(){
+        double[][] matrix = {
+            {(Math.random() * 10) -5, (Math.random() * 10) -5},
+            {(Math.random() * 10) -5, (Math.random() * 10) -5}
+        };
+        return matrix;
+    }
+
     public static double[][] horizontalSym = {
         {1, 0},
         {0, -1}
@@ -78,6 +86,14 @@ public class Image {
             {Math.sin(theta), Math.cos(theta)}
         };
         return rotation;
+    }
+
+    public static double[][] applyRandomTransformation(){
+        double[][] matrix = {
+            {(Math.random() * 10) -5, (Math.random() * 10) -5},
+            {(Math.random() * 10) -5, (Math.random() * 10) -5}
+        };
+        return matrix;
     }
 
     private static String dir = "";

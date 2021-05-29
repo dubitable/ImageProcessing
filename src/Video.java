@@ -67,4 +67,30 @@ public class Video {
     public void applyConvolution(double[][] matrix) throws Exception{
         applyConvolution(matrix, 1);
     }
+    public void applyRandomConvolution() throws Exception{
+        File file = new File("images/videos/"+dir);
+        file.mkdir();
+        Image.setDir("images/videos/"+dir);
+        grabber.start();
+        int n = grabber.getLengthInFrames();
+        for (int i = 0 ; i <  n; i++) {
+            Image frame = Image.open(grabber.grab().getBufferedImage());
+            Image rotated = frame.applyConvolution(Image.randomConvolution());
+            rotated.resize(frame.height(), frame.width()).saveAs(i+".jpg");
+        }
+        grabber.stop();
+    } 
+    public void applyRandomTransformation() throws Exception{
+        File file = new File("images/videos/"+dir);
+        file.mkdir();
+        Image.setDir("images/videos/"+dir);
+        grabber.start();
+        int n = grabber.getLengthInFrames();
+        for (int i = 0 ; i <  n; i++) {
+            Image frame = Image.open(grabber.grab().getBufferedImage());
+            Image rotated = frame.applyTransformation(Image.randomConvolution());
+            rotated.resize(frame.height(), frame.width()).saveAs(i+".jpg");
+        }
+        grabber.stop();
+    } 
 }  

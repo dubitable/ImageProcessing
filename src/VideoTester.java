@@ -14,10 +14,24 @@ public class VideoTester {
         Video.setDir("video2");
         video.rotate();
     }
-    public static void edges() throws Exception{
+    public static void convolutions() throws Exception{
         String filename = "/Users/pierrequereuil/Desktop/ahhhh.mp4";
         Video video = new Video(filename);
         Video.setDir("video3");
         video.applyConvolution(Image.sharpen, 5);
+    }
+
+    public static void randomConvolution() throws Exception{
+        String filename = "/Users/pierrequereuil/Desktop/ahhhh.mp4";
+        Video video = new Video(filename);
+        Video.setDir("video4");
+        video.applyRandomConvolution();
+    }
+
+    public static void randomTransformation() throws Exception{
+        String filename = "/Users/pierrequereuil/Desktop/cat.mp4";
+        Video video = new Video(filename);
+        Video.setDir("video5");
+        video.applyRandomTransformation();
     }
 }
